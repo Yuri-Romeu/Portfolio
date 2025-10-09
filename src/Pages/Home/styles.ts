@@ -1,5 +1,8 @@
 import styled from 'styled-components';
-import notebook from '../../assets/images/notebook.png';
+
+type Props = {
+     image: string;
+};
 
 export const Container = styled.div`
      display: flex;
@@ -9,12 +12,44 @@ export const Container = styled.div`
      position: relative;
 `;
 
-export const ContainerNotebook = styled.div`
+export const ContainerNotebook = styled.div<Props>`
      position: relative;
      width: 900px;
      height: 600px;
      background-size: cover;
-     background-image: url(${notebook});
+     background-image: url(${({ image }) => image});
+`;
+
+export const ScreenFade = styled.div`
+     position: absolute;
+     inset: 0;
+     background-color: black;
+     opacity: 0;
+     animation: fade 0.8s ease-in-out forwards;
+     z-index: 50;
+
+     @keyframes fade {
+          0% {
+               opacity: 0;
+          }
+          30% {
+               opacity: 1;
+          }
+
+          100% {
+               opacity: 0;
+          }
+     }
+`;
+
+export const PendriveArea = styled.div`
+     position: absolute;
+     transform: rotate(340deg);
+     border-radius: 10px;
+     bottom: 60px;
+     right: 10%;
+     width: 100px;
+     height: 170px;
 `;
 
 export const TextNotebook = styled.div`
@@ -31,13 +66,10 @@ export const TextNotebook = styled.div`
      }
 `;
 
-export const ContainerPendrive = styled.div`
+export const ContainerPendrive = styled.img`
      position: absolute;
+     cursor: grab;
      right: 0;
      bottom: 170px;
-
-     img {
-          object-fit: cover;
-          width: 200px;
-     }
+     width: 200px;
 `;

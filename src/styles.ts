@@ -25,4 +25,6 @@ export const GlobalStyle = createGlobalStyle`
         font-family: 'PerfectDOSVGA', monospace;
         color: #fff;
     }
+
+    
 `;
