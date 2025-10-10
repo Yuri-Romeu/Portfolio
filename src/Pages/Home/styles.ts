@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 type Props = {
-     image: string;
+     image?: string;
 };
 
 export const Container = styled.div`
@@ -17,7 +17,7 @@ export const ContainerNotebook = styled.div<Props>`
      width: 900px;
      height: 600px;
      background-size: cover;
-     background-image: url(${({ image }) => image});
+     background-image: url(${({ image }) => image || ''});
 `;
 
 export const ScreenFade = styled.div`
