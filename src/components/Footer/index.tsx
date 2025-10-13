@@ -5,12 +5,21 @@ import { IoBatteryFull } from 'react-icons/io5';
 import { IoVolumeHighOutline } from 'react-icons/io5';
 import { PiNotification } from 'react-icons/pi';
 import startWindows from '../../assets/images/startWindowsXp.png';
+import { useEffect, useState } from 'react';
 
 const Footer = () => {
-     const horario = new Date().toLocaleTimeString('pt-BR', {
-          hour: '2-digit',
-          minute: '2-digit',
-     });
+     const [horario, setHorario] = useState('00:00');
+
+     useEffect(() => {
+          const interval = setInterval(() => {
+               const horario = new Date().toLocaleTimeString('pt-BR', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+               });
+               setHorario(horario);
+          }, 1000);
+          return () => clearInterval(interval);
+     }, []);
 
      return (
           <Container>

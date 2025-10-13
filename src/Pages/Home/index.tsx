@@ -82,6 +82,37 @@ const Home = () => {
           return () => window.removeEventListener('keydown', handleKey);
      }, [connected]);
 
+     // Pular texto com a barra de espaço
+     useEffect(() => {
+          if (connected) return; // desativa quando já conectou o pendrive
+
+          const handleSpace = (event: KeyboardEvent) => {
+               if ((event.key === ' ' || event.code === 'Space') && step < lines.length) {
+                    setStep(prev => prev + 1);
+               }
+          };
+
+          window.addEventListener('keydown', handleSpace);
+          return () => window.removeEventListener('keydown', handleSpace);
+     }, [connected, lines.length, step]);
+
+     // Pular texto de sucesso com espaço
+     useEffect(() => {
+          if (!connected) return; // só ativa após conectar
+
+          const handleSpace = (event: KeyboardEvent) => {
+               if (
+                    (event.key === ' ' || event.code === 'Space') &&
+                    bootStep < linesSuccess.length
+               ) {
+                    setBootStep(prev => prev + 1);
+               }
+          };
+
+          window.addEventListener('keydown', handleSpace);
+          return () => window.removeEventListener('keydown', handleSpace);
+     }, [connected, bootStep, linesSuccess.length]);
+
      // arrastar o pendrive até a área do notebook
      const handleDragEnd = (result: DropResult) => {
           const { destination } = result;
