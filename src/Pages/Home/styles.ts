@@ -4,6 +4,10 @@ type Props = {
      image?: string;
 };
 
+type TextNotebookProps = {
+     situation: 'conected' | 'disconnected';
+};
+
 export const Container = styled.div`
      display: flex;
      justify-content: center;
@@ -52,10 +56,10 @@ export const PendriveArea = styled.div`
      height: 170px;
 `;
 
-export const TextNotebook = styled.div`
+export const TextNotebook = styled.div<TextNotebookProps>`
      position: absolute;
      top: 90px;
-     color: #f5eaeaff;
+     color: ${({ situation }) => (situation === 'conected' ? '#00ff00' : '#f5eaeaff')};
      left: 25%;
      font-size: 14px;
      font-family: 'PerfectDOSVGA', monospace;

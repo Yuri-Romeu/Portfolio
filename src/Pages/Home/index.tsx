@@ -10,7 +10,7 @@ import {
      ScreenFade,
      TextNotebook,
 } from './styles';
-import video from '../../assets/video/inicialização xp.webm';
+
 import { useEffect, useState } from 'react';
 import { DragDropContext, Droppable, Draggable, type DropResult } from '@hello-pangea/dnd';
 import { useNavigate } from 'react-router-dom';
@@ -20,9 +20,11 @@ const Home = () => {
      const [connected, setConnected] = useState(false);
      const [darkness, setDarkness] = useState(false);
      const [finished, setFinished] = useState(false);
+     const [bootStep, setBootStep] = useState(0); // novo contador para a sequência de sucesso
 
      const navigate = useNavigate();
 
+     // textos iniciais (antes de conectar o pendrive)
      const lines = [
           'PhoenixBIOS v6.00PG, Copyright © 1985-2005 Phoenix Technologies.',
           'CPU: Intel(R) Core(TM) i7-6700HQ @ 2.60GHz',
@@ -31,35 +33,62 @@ const Home = () => {
           'No bootable device detected.',
      ];
 
+     // textos após conectar e pressionar F11
+     const linesSuccess = [
+          'Initializing boot manager...',
+          'Bootable USB device detected.',
+          'Verifying USB integrity... OK',
+          'Loading system files...',
+          'Starting Inovestt Environment v1.0...',
+          'Reading user configuration...',
+          'Running startup checks... OK',
+          'Boot complete.',
+          'Welcome to Portfolio v1.0.0',
+     ];
+
+     // efeito para mostrar o texto BIOS inicial
      useEffect(() => {
-          if (step < lines.length) {
-               const timer = setTimeout(() => setStep(prev => prev + 1), 1800);
+          if (!connected && step < lines.length) {
+               const timer = setTimeout(() => setStep(prev => prev + 1), 1500);
                return () => clearTimeout(timer);
           }
-          // eslint-disable-next-line react-hooks/exhaustive-deps
-     }, [step]);
+     }, [step, connected, lines.length]);
 
+     // efeito para mostrar o texto de sucesso (depois do F11)
+     useEffect(() => {
+          if (finished && bootStep < linesSuccess.length) {
+               const timer = setTimeout(() => setBootStep(prev => prev + 1), 1500);
+               return () => clearTimeout(timer);
+          }
+
+          // quando terminar, vai pra página do "sistema"
+          if (bootStep === linesSuccess.length) {
+               setTimeout(() => navigate('/desktop'), 2000);
+          }
+     }, [bootStep, finished, linesSuccess.length, navigate]);
+
+     // ao conectar o pendrive, escuta a tecla F11
      useEffect(() => {
           if (!connected) return;
-          document.addEventListener('keydown', function (event) {
+
+          const handleKey = (event: KeyboardEvent) => {
                if (event.key === 'F11') {
                     triggerFlash();
                     setFinished(true);
-
-                    setTimeout(() => {
-                         navigate('/desktop');
-                    }, 4000);
                }
-          });
-     }, [connected, navigate]);
+          };
 
+          window.addEventListener('keydown', handleKey);
+          return () => window.removeEventListener('keydown', handleKey);
+     }, [connected]);
+
+     // arrastar o pendrive até a área do notebook
      const handleDragEnd = (result: DropResult) => {
           const { destination } = result;
           if (!destination) return;
 
           if (destination.droppableId === 'pendrive-area') {
                triggerFlash();
-               setStep(5);
                setConnected(true);
           }
      };
@@ -74,19 +103,23 @@ const Home = () => {
                <Container>
                     {darkness && <ScreenFade />}
 
+                    {/* Notebook desligado ou aguardando USB */}
                     {!finished ? (
                          <ContainerNotebook image={connected ? notebookPendrive : notebook}>
-                              <TextNotebook>
-                                   {lines.slice(0, step).map((line, index) => (
-                                        <p key={index}>{line}</p>
-                                   ))}
+                              <TextNotebook situation="disconnected">
+                                   {!connected
+                                        ? lines
+                                               .slice(0, step)
+                                               .map((line, i) => <p key={i}>{line}</p>)
+                                        : lines.map((line, i) => <p key={i}>{line}</p>)}
 
+                                   {/* Quando termina o texto inicial */}
                                    {step === lines.length && !connected && (
                                         <>
                                              <br />
                                              <Typewriter
                                                   words={[
-                                                       'Please insert USB drive and press F11 to continue...',
+                                                       'Please insert a USB device and press F11 to continue...',
                                                   ]}
                                                   cursor
                                                   cursorStyle="|"
@@ -97,10 +130,18 @@ const Home = () => {
                                         </>
                                    )}
 
-                                   {connected && (
+                                   {connected && !finished && (
                                         <>
                                              <br />
-                                             <p>Press F11 to continue...</p>
+                                             <p>USB device connected successfully.</p>
+                                             <Typewriter
+                                                  words={['Press F11 to boot from USB...']}
+                                                  cursor
+                                                  cursorStyle="|"
+                                                  typeSpeed={60}
+                                                  deleteSpeed={0}
+                                                  delaySpeed={1000}
+                                             />
                                         </>
                                    )}
                               </TextNotebook>
@@ -115,17 +156,17 @@ const Home = () => {
                               </Droppable>
                          </ContainerNotebook>
                     ) : (
-                         <video
-                              src={video}
-                              autoPlay
-                              style={{
-                                   width: '900px',
-                                   height: '600px',
-                                   borderRadius: '12px',
-                              }}
-                         />
+                         // Quando o sistema inicia (após F11)
+                         <ContainerNotebook image={notebookPendrive}>
+                              <TextNotebook situation="conected">
+                                   {linesSuccess.slice(0, bootStep).map((line, i) => (
+                                        <p key={i}>{line}</p>
+                                   ))}
+                              </TextNotebook>
+                         </ContainerNotebook>
                     )}
 
+                    {/* Pendrive fora do notebook */}
                     {!connected && (
                          <Droppable droppableId="outside" isDropDisabled>
                               {provided => (
