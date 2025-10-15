@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import background from '../../assets/images/desktopXP.webp';
 
-export const Container = styled.div`
+export const Screen = styled.div`
      background-image: url(${background});
      background-size: cover;
      background-repeat: no-repeat;

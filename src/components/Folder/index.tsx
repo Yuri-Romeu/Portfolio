@@ -3,11 +3,12 @@ import { Container } from './styles';
 
 type Props = {
      title: string;
+     onClick?: () => void;
 };
 
-const Folder = ({ title }: Props) => {
+const Folder = ({ title, onClick }: Props) => {
      return (
-          <Container>
+          <Container onClick={onClick}>
                <img src={folderImg} alt="" />
                <h1>{title}</h1>
           </Container>
