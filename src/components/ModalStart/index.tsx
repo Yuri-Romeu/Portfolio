@@ -1,4 +1,4 @@
-import { Container } from './styles';
+import { Container, Footer, Header, Main } from './styles';
 import { useEffect, useState } from 'react';
 
 export interface Perfil {
@@ -47,9 +47,21 @@ const ModalStart = ({ isVisible }: Props) => {
 
      return (
           <Container isVisible={isVisible}>
-               {error && <p>{error}</p>}
-               <img src="" alt="" />
-               <h1>{perfil?.login}</h1>
+               <Header>
+                    {error && <p>{error}</p>}
+                    <img src={perfil?.avatar_url} alt="" />
+                    <h1>{perfil?.login}</h1>
+               </Header>
+
+               <Main>
+                    <div className="white">e</div>
+                    <div className="blue">e</div>
+               </Main>
+
+               <Footer>
+                    <button>Log out</button>
+                    <button>Turn off</button>
+               </Footer>
           </Container>
      );
 };
