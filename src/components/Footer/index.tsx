@@ -7,7 +7,11 @@ import { PiNotification } from 'react-icons/pi';
 import startWindows from '../../assets/images/startWindowsXp.png';
 import { useEffect, useState } from 'react';
 
-const Footer = () => {
+type Props = {
+     onClickModalStart: () => void;
+};
+
+const Footer = ({ onClickModalStart }: Props) => {
      const [horario, setHorario] = useState('00:00');
 
      useEffect(() => {
@@ -24,7 +28,7 @@ const Footer = () => {
      return (
           <Container>
                <StartArea>
-                    <button>
+                    <button onClick={onClickModalStart}>
                          <img src={startWindows} alt="" />
                     </button>
                </StartArea>

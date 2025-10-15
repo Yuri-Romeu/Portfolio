@@ -3,6 +3,7 @@ import Folder from '../../components/Folder';
 import Footer from '../../components/Footer';
 import { Screen } from './styles';
 import Modal from '../../components/Modal';
+import ModalStart from '../../components/ModalStart';
 
 // Tipagem básica para os repositórios do GitHub
 export interface Repo {
@@ -17,6 +18,7 @@ const Desktop = () => {
      const [selectedProject, setSelectedProject] = useState<Repo | null>(null);
      const [repos, setRepos] = useState<Repo[]>([]);
      const [error, setError] = useState<string | null>(null);
+     const [modalStart, setModalStart] = useState(false);
      const username = 'yuri-romeu';
 
      useEffect(() => {
@@ -69,7 +71,7 @@ const Desktop = () => {
                     ))}
                </Screen>
 
-               <Footer />
+               <Footer onClickModalStart={() => setModalStart(!modalStart)} />
 
                {selectedProject && (
                     <Modal
@@ -78,6 +80,8 @@ const Desktop = () => {
                          onClose={handleCloseModal}
                     />
                )}
+
+               <ModalStart isVisible={modalStart} />
           </div>
      );
 };
