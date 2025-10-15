@@ -7,5 +7,11 @@ export const Container = styled.div`
      background-repeat: no-repeat;
      height: 100vh;
      max-width: 100%;
+     display: flex;
+     flex-direction: column;
+     flex-wrap: wrap;
+     align-content: flex-start;
      position: relative;
+     padding: 20px;
+     column-gap: 4px;
 `;

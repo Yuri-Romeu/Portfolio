@@ -5,7 +5,7 @@ export const Container = styled.div`
      justify-content: space-between;
      align-items: center;
      width: 100%;
-     height: 30px;
+     height: 26px;
      padding: 15px;
      position: absolute;
      bottom: 0;
@@ -19,7 +19,7 @@ export const StartArea = styled.div`
      button {
           position: absolute;
           top: -13px;
-          left: -12px;
+          left: -15px;
           cursor: pointer;
           border: none;
           background-color: transparent;

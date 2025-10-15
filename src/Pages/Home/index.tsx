@@ -39,7 +39,7 @@ const Home = () => {
           'Bootable USB device detected.',
           'Verifying USB integrity... OK',
           'Loading system files...',
-          'Starting Inovestt Environment v1.0...',
+          'Starting Portfolio Environment v1.0...',
           'Reading user configuration...',
           'Running startup checks... OK',
           'Boot complete.',
