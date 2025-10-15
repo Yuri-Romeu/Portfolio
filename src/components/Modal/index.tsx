@@ -1,17 +1,25 @@
-import type { ProjectData } from '../../Pages/Desktop';
-import { Container } from './styles';
+import type { Repo } from '../../Pages/Desktop';
+import { Container, Header } from './styles';
+import buttonClose from '../../assets/images/buttonClose.png';
+import folder from '../../assets/images/folderOpen.png';
 
 type Props = {
      isOpen: boolean;
-     project: ProjectData;
+     project: Repo;
      onClose: () => void;
 };
 
 const Modal = ({ isOpen, project, onClose }: Props) => {
      return (
           <Container isOpen={isOpen}>
-               <button onClick={onClose}>X</button>
-               <h1>{project.title}</h1>
+               <Header>
+                    <h1>
+                         <img src={folder} alt="" /> {project.name}
+                    </h1>
+                    <button onClick={onClose}>
+                         <img src={buttonClose} alt="" />
+                    </button>
+               </Header>
           </Container>
      );
 };

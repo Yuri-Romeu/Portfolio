@@ -1,43 +1,69 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Folder from '../../components/Folder';
 import Footer from '../../components/Footer';
 import { Screen } from './styles';
 import Modal from '../../components/Modal';
 
-export interface ProjectData {
+// Tipagem básica para os repositórios do GitHub
+export interface Repo {
      id: number;
-     title: string;
+     name: string;
+     html_url: string;
+     description: string | null;
 }
 
 const Desktop = () => {
      const [openModal, setOpenModal] = useState(false);
-     const [selectedProject, setSelectedProject] = useState<ProjectData | null>(null);
+     const [selectedProject, setSelectedProject] = useState<Repo | null>(null);
+     const [repos, setRepos] = useState<Repo[]>([]);
+     const [error, setError] = useState<string | null>(null);
+     const username = 'yuri-romeu';
 
-     const projects: ProjectData[] = [
-          { id: 1, title: 'E-play' },
-          { id: 2, title: 'E-food' },
-          { id: 3, title: 'KanbanBoard' },
-          { id: 4, title: 'PasswordManager' },
-          { id: 5, title: 'Cypress' },
-          { id: 6, title: 'Contact Manager' },
-          { id: 7, title: 'ToDoList' },
-          { id: 8, title: 'Inovestt' },
-          { id: 9, title: 'App-Ride' },
-          { id: 10, title: 'DisneyPlus' },
-     ];
+     useEffect(() => {
+          const fetchRepos = async () => {
+               try {
+                    const res = await fetch(`https://api.github.com/users/${username}/repos`);
+                    if (!res.ok) {
+                         throw new Error(
+                              `Erro ao buscar repositórios: ${res.status} ${res.statusText}`,
+                         );
+                    }
+                    const data: Repo[] = await res.json();
+                    setRepos(data);
+                    console.log('Repositórios carregados:', data);
+               } catch (err: unknown) {
+                    if (err instanceof Error) {
+                         console.error(err);
+                         setError(err.message);
+                    } else {
+                         setError('Erro desconhecido ao buscar repositórios.');
+                    }
+               }
+          };
 
-     const handleOpenModal = (project: ProjectData) => {
+          fetchRepos();
+     }, [username]);
+
+     const handleOpenModal = (project: Repo) => {
           setSelectedProject(project);
           setOpenModal(true);
      };
 
+     const handleCloseModal = () => {
+          if (!openModal) return;
+
+          setOpenModal(false);
+          setSelectedProject(null);
+     };
+
      return (
-          <>
-               <Screen>
-                    {projects.map(project => (
+          <div>
+               <Screen onClick={handleCloseModal}>
+                    {error && <p>⚠️ {error}</p>}
+                    {repos.map(project => (
                          <Folder
                               key={project.id}
-                              title={project.title}
+                              title={project.name}
                               onClick={() => handleOpenModal(project)}
                          />
                     ))}
@@ -45,12 +71,14 @@ const Desktop = () => {
 
                <Footer />
 
-               <Modal
-                    project={selectedProject || { id: 0, title: '' }}
-                    isOpen={openModal}
-                    onClose={() => setOpenModal(false)}
-               />
-          </>
+               {selectedProject && (
+                    <Modal
+                         project={selectedProject}
+                         isOpen={openModal}
+                         onClose={handleCloseModal}
+                    />
+               )}
+          </div>
      );
 };
 

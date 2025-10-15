@@ -8,7 +8,7 @@ type Props = {
 
 const Folder = ({ title, onClick }: Props) => {
      return (
-          <Container onClick={onClick}>
+          <Container title={title} onClick={onClick}>
                <img src={folderImg} alt="" />
                <h1>{title}</h1>
           </Container>

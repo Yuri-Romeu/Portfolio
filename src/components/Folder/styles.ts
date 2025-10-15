@@ -11,7 +11,6 @@ export const Container = styled.div`
      border-radius: 1px;
      cursor: default;
      margin: 4px;
-     word-break: break-all;
 
      img {
           width: 40px;
@@ -27,6 +26,10 @@ export const Container = styled.div`
           line-height: 1.2;
           font-family: 'SegoeUI';
           margin: 3px 0;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          max-width: 100%;
      }
 
      &:hover {
