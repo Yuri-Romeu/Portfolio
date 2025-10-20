@@ -4,6 +4,14 @@ type Props = {
      isOpen: boolean;
 };
 
+type PropsContent = {
+     size?: number;
+};
+
+type PropsSelect = {
+     size: number;
+};
+
 export const Container = styled.div<Props>`
      display: ${({ isOpen }) => (isOpen ? 'block' : 'none')};
      position: absolute;
@@ -52,5 +60,83 @@ export const Header = styled.header`
           &:active {
                transform: scale(0.9);
           }
+     }
+`;
+
+export const Menu = styled.div`
+     background-color: #f2ead0;
+     color: #242322;
+     display: flex;
+     font-size: 14px;
+     flex-direction: column;
+
+     div {
+          display: flex;
+          border-bottom: 1px solid #c3c3c3;
+          border-right: 1px solid #c3c3c3;
+
+          ul {
+               display: flex;
+
+               li {
+                    list-style: none;
+                    padding: 4px 8px;
+                    cursor: pointer;
+               }
+          }
+
+          &.thirdPart {
+               display: flex;
+               align-items: center;
+               height: 32px;
+
+               p {
+                    margin: 0 16px;
+                    display: flex;
+
+                    img {
+                         margin: 0 8px;
+                         width: 20px;
+                         height: 20px;
+                         transform: rotate(180deg);
+                         cursor: pointer;
+                    }
+               }
+          }
+     }
+`;
+
+export const Content = styled.div<PropsContent>`
+     padding: 8px 20px;
+     gap: 10px;
+     color: #000000cc;
+     width: ${({ size }) => `${size}px`};
+`;
+
+export const Select = styled.div<PropsSelect>`
+     background-color: #fff;
+     width: ${({ size }) => `${size}px`};
+     height: 25px;
+     border: 1px solid #1347ba;
+     display: flex;
+     align-items: center;
+     justify-content: space-between;
+
+     img {
+          width: 18px;
+          height: 18px;
+          margin: 0 5px;
+     }
+
+     div:first-child {
+          border: none;
+          font-weight: 500;
+     }
+
+     div:last-child {
+          background-color: #adc7f8;
+          height: 100%;
+          display: flex;
+          align-items: center;
      }
 `;
