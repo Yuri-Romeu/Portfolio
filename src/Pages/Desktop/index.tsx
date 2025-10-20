@@ -11,6 +11,7 @@ export interface Repo {
      name: string;
      html_url: string;
      description: string | null;
+     type?: string;
 }
 
 const Desktop = () => {
@@ -78,6 +79,7 @@ const Desktop = () => {
                          project={selectedProject}
                          isOpen={openModal}
                          onClose={handleCloseModal}
+                         username={username}
                     />
                )}
 

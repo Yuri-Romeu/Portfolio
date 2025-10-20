@@ -1,4 +1,6 @@
 import styled from 'styled-components';
+import note from '../../assets/images/windows-note.png';
+import folder from '../../assets/images/folder.png';
 
 type Props = {
      isOpen: boolean;
@@ -10,6 +12,10 @@ type PropsContent = {
 
 type PropsSelect = {
      size: number;
+};
+
+type PropsFile = {
+     type: string;
 };
 
 export const Container = styled.div<Props>`
@@ -138,5 +144,52 @@ export const Select = styled.div<PropsSelect>`
           height: 100%;
           display: flex;
           align-items: center;
+     }
+`;
+
+export const Aside = styled.aside`
+     background-color: #f2ead0;
+     width: 150px;
+     height: 348px;
+     overflow: hidden;
+
+     h1 {
+          font-size: 15px;
+          font-weight: 600;
+          text-align: center;
+          padding: 6px 0;
+          color: #000000;
+          line-height: 1.2;
+     }
+
+     hr {
+          width: 70%;
+          height: 1px;
+          border: none;
+          background-color: #c3c3c3;
+          margin: 0 auto;
+     }
+`;
+
+export const Files = styled.div<PropsFile>`
+     display: flex;
+     align-items: center;
+     gap: 2px;
+     margin: 0 4px;
+
+     &::before {
+          content: '';
+          display: inline-block;
+          width: ${({ type }) => (type === 'file' ? '30px' : '20px')};
+          height: ${({ type }) => (type === 'file' ? '30px' : '20px')};
+          background-image: url(${({ type }) => (type === 'file' ? note : folder)});
+          background-size: contain;
+          background-repeat: no-repeat;
+     }
+
+     p {
+          margin: 0;
+          color: #000;
+          text-overflow: ellipsis;
      }
 `;

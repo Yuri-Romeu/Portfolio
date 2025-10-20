@@ -1,5 +1,5 @@
 import type { Repo } from '../../Pages/Desktop';
-import { Container, Content, Header, Menu, Select } from './styles';
+import { Aside, Container, Content, Files, Header, Menu, Select } from './styles';
 import buttonClose from '../../assets/images/buttonClose.png';
 import folder from '../../assets/images/folderOpen.png';
 
@@ -8,14 +8,47 @@ import { FaArrowAltCircleLeft } from 'react-icons/fa';
 import { MdKeyboardArrowDown } from 'react-icons/md';
 
 import arrowGreen from '../../assets/images/arrow-green.png';
+import { useEffect, useState } from 'react';
 
 type Props = {
      isOpen: boolean;
      project: Repo;
      onClose: () => void;
+     username: string;
 };
 
-const Modal = ({ isOpen, project, onClose }: Props) => {
+const Modal = ({ isOpen, project, onClose, username }: Props) => {
+     const [repos, setRepos] = useState<Repo[]>([]);
+     const [error, setError] = useState<string | null>(null);
+
+     useEffect(() => {
+          const fetchRepos = async () => {
+               try {
+                    const res = await fetch(
+                         `https://api.github.com/repos/${username}/${project.name}/contents/`,
+                    );
+                    if (!res.ok) {
+                         throw new Error(
+                              `Erro ao buscar repositórios: ${res.status} ${res.statusText}`,
+                         );
+                    }
+                    const data: Repo[] = await res.json();
+                    setRepos(data);
+                    console.log('Repositórios carregados:', data);
+               } catch (err: unknown) {
+                    if (err instanceof Error) {
+                         console.error(err);
+                         setError(err.message);
+                         console.log(error);
+                    } else {
+                         setError('Erro desconhecido ao buscar repositórios.');
+                    }
+               }
+          };
+
+          fetchRepos();
+     }, [username]);
+
      return (
           <Container isOpen={isOpen}>
                <Header>
@@ -81,6 +114,17 @@ const Modal = ({ isOpen, project, onClose }: Props) => {
                          </p>
                     </div>
                </Menu>
+
+               <Aside>
+                    <h1>File and Folder Tasks</h1>
+                    <hr />
+
+                    {repos.map(repo => (
+                         <Files type={repo.type ?? 'file'}>
+                              <p key={repo.name}>{repo.name}</p>
+                         </Files>
+                    ))}
+               </Aside>
           </Container>
      );
 };
