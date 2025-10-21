@@ -1,51 +1,18 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Folder from '../../components/Folder';
 import Footer from '../../components/Footer';
 import { Screen } from './styles';
 import Modal from '../../components/Modal';
 import ModalStart from '../../components/ModalStart';
-
-// Tipagem básica para os repositórios do GitHub
-export interface Repo {
-     id: number;
-     name: string;
-     html_url: string;
-     description: string | null;
-     type?: string;
-}
+import { useGetUserReposQuery, type Repo } from '../../services/api';
 
 const Desktop = () => {
      const [openModal, setOpenModal] = useState(false);
      const [selectedProject, setSelectedProject] = useState<Repo | null>(null);
-     const [repos, setRepos] = useState<Repo[]>([]);
-     const [error, setError] = useState<string | null>(null);
      const [modalStart, setModalStart] = useState(false);
      const username = 'yuri-romeu';
 
-     useEffect(() => {
-          const fetchRepos = async () => {
-               try {
-                    const res = await fetch(`https://api.github.com/users/${username}/repos`);
-                    if (!res.ok) {
-                         throw new Error(
-                              `Erro ao buscar repositórios: ${res.status} ${res.statusText}`,
-                         );
-                    }
-                    const data: Repo[] = await res.json();
-                    setRepos(data);
-                    console.log('Repositórios carregados:', data);
-               } catch (err: unknown) {
-                    if (err instanceof Error) {
-                         console.error(err);
-                         setError(err.message);
-                    } else {
-                         setError('Erro desconhecido ao buscar repositórios.');
-                    }
-               }
-          };
-
-          fetchRepos();
-     }, [username]);
+     const { data: repos, error, isLoading } = useGetUserReposQuery(username);
 
      const handleOpenModal = (project: Repo) => {
           setSelectedProject(project);
@@ -62,8 +29,9 @@ const Desktop = () => {
      return (
           <div>
                <Screen onClick={handleCloseModal}>
-                    {error && <p>⚠️ {error}</p>}
-                    {repos.map(project => (
+                    {isLoading && <p>Carregando repositórios...</p>}
+                    {error && <p>⚠️ Erro ao buscar repositórios.</p>}
+                    {repos?.map(project => (
                          <Folder
                               key={project.id}
                               title={project.name}

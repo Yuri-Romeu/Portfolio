@@ -1,5 +1,5 @@
-import type { Repo } from '../../Pages/Desktop';
-import { Aside, Container, Content, Files, Header, Menu, Select } from './styles';
+import type { Repo } from '../../services/api';
+import { Aside, Container, Content, Files, Header, Main, Menu, Select } from './styles';
 import buttonClose from '../../assets/images/buttonClose.png';
 import folder from '../../assets/images/folderOpen.png';
 
@@ -8,7 +8,12 @@ import { FaArrowAltCircleLeft } from 'react-icons/fa';
 import { MdKeyboardArrowDown } from 'react-icons/md';
 
 import arrowGreen from '../../assets/images/arrow-green.png';
-import { useEffect, useState } from 'react';
+import {
+     useGetRepoContentsQuery,
+     useGetRepoInfoPromiseQuery,
+     useGetLanguagesPromiseQuery,
+     useGetCommitsPromiseQuery,
+} from '../../services/api';
 
 type Props = {
      isOpen: boolean;
@@ -18,36 +23,34 @@ type Props = {
 };
 
 const Modal = ({ isOpen, project, onClose, username }: Props) => {
-     const [repos, setRepos] = useState<Repo[]>([]);
-     const [error, setError] = useState<string | null>(null);
+     const {
+          data: repos,
+          error,
+          isLoading,
+     } = useGetRepoContentsQuery({
+          username,
+          project: project.name,
+     });
 
-     useEffect(() => {
-          const fetchRepos = async () => {
-               try {
-                    const res = await fetch(
-                         `https://api.github.com/repos/${username}/${project.name}/contents/`,
-                    );
-                    if (!res.ok) {
-                         throw new Error(
-                              `Erro ao buscar repositórios: ${res.status} ${res.statusText}`,
-                         );
-                    }
-                    const data: Repo[] = await res.json();
-                    setRepos(data);
-                    console.log('Repositórios carregados:', data);
-               } catch (err: unknown) {
-                    if (err instanceof Error) {
-                         console.error(err);
-                         setError(err.message);
-                         console.log(error);
-                    } else {
-                         setError('Erro desconhecido ao buscar repositórios.');
-                    }
-               }
-          };
+     const { data: info } = useGetRepoInfoPromiseQuery({
+          username,
+          project: project.name,
+     });
 
-          fetchRepos();
-     }, [username]);
+     const { data: langs } = useGetLanguagesPromiseQuery({
+          username,
+          project: project.name,
+     });
+
+     const { data: commits } = useGetCommitsPromiseQuery({
+          username,
+          project: project.name,
+     });
+
+     if (!info || !langs || !commits) return <p>carregando...</p>;
+
+     const totalCommits = commits.reduce((acc, cur) => acc + cur.total, 0);
+     const mainLanguage = Object.entries(langs).sort((a, b) => b[1] - a[1])[0][0];
 
      return (
           <Container isOpen={isOpen}>
@@ -115,16 +118,30 @@ const Modal = ({ isOpen, project, onClose, username }: Props) => {
                     </div>
                </Menu>
 
-               <Aside>
-                    <h1>File and Folder Tasks</h1>
-                    <hr />
+               <div className="content">
+                    <Aside>
+                         <h1>File and Folder Tasks</h1>
+                         <hr />
+                         {isLoading && <p>Carregando arquivos...</p>}
+                         {error && <p>⚠️ Erro ao carregar o conteúdo do repositório.</p>}
 
-                    {repos.map(repo => (
-                         <Files type={repo.type ?? 'file'}>
-                              <p key={repo.name}>{repo.name}</p>
-                         </Files>
-                    ))}
-               </Aside>
+                         {repos?.map(repo => (
+                              <Files type={repo.type ?? 'file'}>
+                                   <p key={repo.name}>{repo.name}</p>
+                              </Files>
+                         ))}
+                    </Aside>
+
+                    <Main>
+                         <h1>{project.name}</h1>
+                         <p>{project.description}</p>
+                         <p>⭐ Stars: {info.stargazers_count}</p>
+                         <p>🍴 Forks: {info.forks_count}</p>
+                         <p>🐞 Issues abertas: {info.open_issues_count}</p>
+                         <p>💬 Total de commits: {totalCommits}</p>
+                         <p>💻 Linguagem principal: {mainLanguage}</p>
+                    </Main>
+               </div>
           </Container>
      );
 };

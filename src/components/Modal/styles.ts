@@ -29,7 +29,12 @@ export const Container = styled.div<Props>`
      border-radius: 8px;
      width: 700px;
      height: 500px;
+     color: #000;
      font-family: 'TahomaCustom';
+
+     .content {
+          display: flex;
+     }
 `;
 
 export const Header = styled.header`
@@ -152,6 +157,7 @@ export const Aside = styled.aside`
      width: 150px;
      height: 348px;
      overflow: hidden;
+     border-right: 1px solid #c3c3c3;
 
      h1 {
           font-size: 15px;
@@ -191,5 +197,21 @@ export const Files = styled.div<PropsFile>`
           margin: 0;
           color: #000;
           text-overflow: ellipsis;
+     }
+`;
+
+export const Main = styled.main`
+     background-color: #fff;
+     color: #000000;
+     width: 100%;
+     padding: 16px;
+
+     h1 {
+          margin: 4px 0;
+          font-size: 30px;
+     }
+
+     p {
+          margin: 4px 0;
      }
 `;
