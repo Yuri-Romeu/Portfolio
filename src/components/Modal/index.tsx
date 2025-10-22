@@ -15,6 +15,7 @@ import {
      useGetCommitsPromiseQuery,
 } from '../../services/api';
 import { useEffect, useState } from 'react';
+import LanguagesGraphic from '../LanguagesGraphic';
 
 type Props = {
      isOpen: boolean;
@@ -97,6 +98,8 @@ const Modal = ({ isOpen, project, onClose, username }: Props) => {
      const mainLanguage =
           langsEntries.length > 0 ? langsEntries.sort((a, b) => b[1] - a[1])[0][0] : 'Desconhecida';
 
+     const dateLastCommit = new Date(info.pushed_at).toLocaleDateString('pt-BR');
+
      return (
           <Container isOpen={isOpen}>
                <Header>
@@ -156,10 +159,10 @@ const Modal = ({ isOpen, project, onClose, username }: Props) => {
                               </div>
                          </Select>
 
-                         <p>
+                         <a href={project.html_url} target="_blank">
                               <img src={arrowGreen} alt="" />
                               Go
-                         </p>
+                         </a>
                     </div>
                </Menu>
 
@@ -190,13 +193,18 @@ const Modal = ({ isOpen, project, onClose, username }: Props) => {
                               </span>
                               <span>{mainLanguage}</span>
                               <span>{info.forks_count} contributors</span>
+                              <span>{info.stargazers_count} stars</span>
                          </div>
+                         <hr />
 
-                         {/* <p>⭐ Stars: {info.stargazers_count}</p>
-                         <p>🍴 Forks: {info.forks_count}</p>
-                         <p>🐞 Issues abertas: {info.open_issues_count}</p>
-                         <p>💬 Total de commits: {totalCommits}</p>
-                         <p>💻 Linguagem principal: {mainLanguage}</p> */}
+                         <LanguagesGraphic project={project} username={username} />
+
+                         <span>Ultimo commit: {dateLastCommit}</span>
+                         <span>Tamanho: {info.size} bytes</span>
+                         <span>Criador: {username}</span>
+                         <a href={info.html_url} target="_blank">
+                              Ir para GitHub
+                         </a>
                     </Main>
                </div>
           </Container>

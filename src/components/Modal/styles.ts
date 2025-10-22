@@ -101,9 +101,12 @@ export const Menu = styled.div`
                align-items: center;
                height: 32px;
 
+               a,
                p {
                     margin: 0 16px;
                     display: flex;
+                    text-decoration: none;
+                    color: #000;
 
                     img {
                          margin: 0 8px;
@@ -215,11 +218,33 @@ export const Main = styled.main`
           margin: 4px 0;
      }
 
+     span {
+          display: block;
+          color: #313030ff;
+     }
+
      .infosMain {
           display: flex;
           font-size: 14px;
           gap: 12px;
           margin: 10px 0;
           color: #494949ff;
+     }
+
+     hr {
+          width: 70%;
+          margin: 4px 0;
+     }
+
+     a {
+          text-decoration: none;
+          color: #1347ba;
+          margin-top: 4px;
+          display: block;
+
+          &:hover {
+               text-decoration: underline;
+               cursor: pointer;
+          }
      }
 `;

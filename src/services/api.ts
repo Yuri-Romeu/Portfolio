@@ -10,6 +10,8 @@ export interface Repo {
      forks_count: number;
      open_issues_count: number;
      language: string | null;
+     size: number;
+     pushed_at: string;
 }
 
 export interface RepoContent {
