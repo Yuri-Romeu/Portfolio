@@ -214,4 +214,12 @@ export const Main = styled.main`
      p {
           margin: 4px 0;
      }
+
+     .infosMain {
+          display: flex;
+          font-size: 14px;
+          gap: 12px;
+          margin: 10px 0;
+          color: #494949ff;
+     }
 `;

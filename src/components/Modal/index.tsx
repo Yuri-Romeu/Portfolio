@@ -14,6 +14,7 @@ import {
      useGetLanguagesPromiseQuery,
      useGetCommitsPromiseQuery,
 } from '../../services/api';
+import { useEffect, useState } from 'react';
 
 type Props = {
      isOpen: boolean;
@@ -42,15 +43,59 @@ const Modal = ({ isOpen, project, onClose, username }: Props) => {
           project: project.name,
      });
 
-     const { data: commits } = useGetCommitsPromiseQuery({
-          username,
-          project: project.name,
-     });
+     const {
+          data: commits,
+          isFetching: isFetchingCommits,
+          refetch: refetchCommits,
+     } = useGetCommitsPromiseQuery(
+          { username, project: project.name },
+          { refetchOnMountOrArgChange: true },
+     );
 
-     if (!info || !langs || !commits) return <p>carregando...</p>;
+     const [retryCount, setRetryCount] = useState(0);
 
-     const totalCommits = commits.reduce((acc, cur) => acc + cur.total, 0);
-     const mainLanguage = Object.entries(langs).sort((a, b) => b[1] - a[1])[0][0];
+     useEffect(() => {
+          if (Array.isArray(commits) && commits.length > 0) {
+               setRetryCount(0);
+               return;
+          }
+
+          if (Array.isArray(commits) && commits.length === 0 && retryCount < 10) {
+               const id = setInterval(() => {
+                    refetchCommits();
+                    setRetryCount(prev => prev + 1);
+               }, 5000);
+
+               return () => clearInterval(id);
+          }
+     }, [commits, refetchCommits, retryCount]);
+
+     const totalCommits =
+          Array.isArray(commits) && commits.length > 0
+               ? commits.reduce((acc, cur) => acc + (cur.total || 0), 0)
+               : null;
+
+     if (!info || !langs || !commits) {
+          return (
+               <Container isOpen={isOpen}>
+                    <Header>
+                         <h1>
+                              <img src={folder} alt="" /> {project.name}
+                         </h1>
+                         <button onClick={onClose}>
+                              <img src={buttonClose} alt="" />
+                         </button>
+                    </Header>
+                    <Main>
+                         <p>Carregando dados do repositório...</p>
+                    </Main>
+               </Container>
+          );
+     }
+
+     const langsEntries = Object.entries(langs as unknown as Record<string, number>);
+     const mainLanguage =
+          langsEntries.length > 0 ? langsEntries.sort((a, b) => b[1] - a[1])[0][0] : 'Desconhecida';
 
      return (
           <Container isOpen={isOpen}>
@@ -122,7 +167,7 @@ const Modal = ({ isOpen, project, onClose, username }: Props) => {
                     <Aside>
                          <h1>File and Folder Tasks</h1>
                          <hr />
-                         {isLoading && <p>Carregando arquivos...</p>}
+                         {isLoading && <p>Carregando...</p>}
                          {error && <p>⚠️ Erro ao carregar o conteúdo do repositório.</p>}
 
                          {repos?.map(repo => (
@@ -135,11 +180,23 @@ const Modal = ({ isOpen, project, onClose, username }: Props) => {
                     <Main>
                          <h1>{project.name}</h1>
                          <p>{project.description}</p>
-                         <p>⭐ Stars: {info.stargazers_count}</p>
+
+                         <div className="infosMain">
+                              <span>
+                                   {isFetchingCommits && !totalCommits
+                                        ? 'Calculando commits...'
+                                        : totalCommits ?? '—'}{' '}
+                                   commits
+                              </span>
+                              <span>{mainLanguage}</span>
+                              <span>{info.forks_count} contributors</span>
+                         </div>
+
+                         {/* <p>⭐ Stars: {info.stargazers_count}</p>
                          <p>🍴 Forks: {info.forks_count}</p>
                          <p>🐞 Issues abertas: {info.open_issues_count}</p>
                          <p>💬 Total de commits: {totalCommits}</p>
-                         <p>💻 Linguagem principal: {mainLanguage}</p>
+                         <p>💻 Linguagem principal: {mainLanguage}</p> */}
                     </Main>
                </div>
           </Container>

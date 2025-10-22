@@ -31,7 +31,14 @@ export interface CommitActivity {
 
 export const githubApi = createApi({
      reducerPath: 'githubApi',
-     baseQuery: fetchBaseQuery({ baseUrl: 'https://api.github.com/' }),
+     baseQuery: fetchBaseQuery({
+          baseUrl: 'https://api.github.com/',
+          prepareHeaders: headers => {
+               const token = import.meta.env.VITE_GITHUB_TOKEN;
+               if (token) headers.set('Authorization', `token ${token}`);
+               return headers;
+          },
+     }),
      endpoints: builder => ({
           getUserRepos: builder.query<Repo[], string>({
                query: username => `users/${username}/repos`,
