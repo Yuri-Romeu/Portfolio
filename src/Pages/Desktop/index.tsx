@@ -4,10 +4,13 @@ import Footer from '../../components/Footer';
 import { Screen } from './styles';
 import Modal from '../../components/Modal';
 import ModalStart from '../../components/ModalStart';
+import userWindows from '../../assets/images/user-windows.png';
 import { useGetUserReposQuery, type Repo } from '../../services/api';
+import ModalUser from '../../components/ModalUser';
 
 const Desktop = () => {
      const [openModal, setOpenModal] = useState(false);
+     const [openModalUser, setOpenModalUser] = useState(false);
      const [selectedProject, setSelectedProject] = useState<Repo | null>(null);
      const [modalStart, setModalStart] = useState(false);
      const username = 'yuri-romeu';
@@ -17,12 +20,25 @@ const Desktop = () => {
      const handleOpenModal = (project: Repo) => {
           setSelectedProject(project);
           setOpenModal(true);
+          setOpenModalUser(false);
      };
 
      const handleCloseModal = () => {
           if (!openModal) return;
 
           setOpenModal(false);
+          setSelectedProject(null);
+     };
+
+     const handleOpenModalUser = () => {
+          setOpenModalUser(true);
+          setOpenModal(false);
+     };
+
+     const handleCloseModalUser = () => {
+          if (!openModalUser) return;
+
+          setOpenModalUser(false);
           setSelectedProject(null);
      };
 
@@ -38,6 +54,10 @@ const Desktop = () => {
                               onClick={() => handleOpenModal(project)}
                          />
                     ))}
+
+                    {!isLoading && (
+                         <Folder title="User" img={userWindows} onClick={handleOpenModalUser} />
+                    )}
                </Screen>
 
                <Footer onClickModalStart={() => setModalStart(!modalStart)} />
@@ -52,6 +72,7 @@ const Desktop = () => {
                )}
 
                <ModalStart isVisible={modalStart} />
+               <ModalUser isOpen={openModalUser} closeModal={handleCloseModalUser} />
           </div>
      );
 };
