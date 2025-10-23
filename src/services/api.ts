@@ -14,6 +14,17 @@ export interface Repo {
      pushed_at: string;
 }
 
+export interface Perfil {
+     login: string;
+     avatar_url: string;
+     followers: string;
+     following: string;
+     bio: string;
+     location: string;
+     publick_repos: string;
+     name: string;
+}
+
 export interface RepoContent {
      name: string;
      path: string;
@@ -42,6 +53,10 @@ export const githubApi = createApi({
           },
      }),
      endpoints: builder => ({
+          getUser: builder.query<Perfil, string>({
+               query: username => `users/${username}`,
+          }),
+
           getUserRepos: builder.query<Repo[], string>({
                query: username => `users/${username}/repos`,
           }),
@@ -77,4 +92,5 @@ export const {
      useGetRepoInfoPromiseQuery,
      useGetLanguagesPromiseQuery,
      useGetCommitsPromiseQuery,
+     useGetUserQuery,
 } = githubApi;

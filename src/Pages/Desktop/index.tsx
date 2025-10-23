@@ -72,7 +72,11 @@ const Desktop = () => {
                )}
 
                <ModalStart isVisible={modalStart} />
-               <ModalUser isOpen={openModalUser} closeModal={handleCloseModalUser} />
+               <ModalUser
+                    username={username}
+                    isOpen={openModalUser}
+                    closeModal={handleCloseModalUser}
+               />
           </div>
      );
 };
